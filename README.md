@@ -14,7 +14,7 @@ API REST em Ruby on Rails para gerenciamento de carrinho de compras como parte d
 ## Instalação local
 
 ```bash
-git clone <repo>
+git clone git@github.com:devbatista/cart_api.git
 cd carrinho_api
 bundle install
 rails db:create db:migrate
