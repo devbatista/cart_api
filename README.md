@@ -23,14 +23,6 @@ bundle exec sidekiq
 rails server
 ```
 
-## Docker
-
-```bash
-docker-compose build
-docker-compose run web rails db:create db:migrate
-docker-compose up
-```
-
 ## Endpoints
 
 | Método & Rota          | Descrição                              |
