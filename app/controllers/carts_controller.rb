@@ -5,8 +5,8 @@ class CartsController < ApplicationController
 
     return render_invalid_quantity if quantity <= 0
 
-    cart  = current_cart
-    item  = find_or_build_item(cart, product)
+    cart = current_cart
+    item = find_or_build_item(cart, product)
     item.quantity = item.quantity.to_i + quantity
     item.save!
 
