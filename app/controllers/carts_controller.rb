@@ -1,4 +1,14 @@
 class CartsController < ApplicationController
+
+  def show
+    return render json: { error: 'Cart not found' }, status: :not_found unless session[:cart_id]
+
+    cart = Cart.find_by(id: session[:cart_id])
+    return render json: { error: 'Cart not found' }, status: :not_found unless cart
+    
+    render json: cart_payload(cart), status: :ok
+  end
+
   def create
     product = Product.find(cart_params[:product_id])
     quantity = cart_params[:quantity].to_i
