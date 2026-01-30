@@ -4,7 +4,7 @@ RSpec.describe 'Carts', type: :request do
   let(:product) { Product.create!(name: 'Test Product', price: 10.0) }
 
   describe 'POST /cart' do
-    it 'cria um carrinho na sessão e adiciona um produto' do
+    it 'create a cart in the session and adds a product' do
       post '/cart', params: { product_id: product.id, quantity: 2 }, as: :json
 
       expect(response).to have_http_status(:created)
@@ -23,7 +23,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['total_price']).to eq(20.0)
     end
 
-    it 'retorna erro quando o produto não existe' do
+    it 'returns error when the product does not exist' do
       post '/cart', params: { product_id: 0, quantity: 1 }, as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -31,7 +31,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['error']).to eq('Product not found')
     end
 
-    it 'retorna erro quando a quantidade é inválida' do
+    it 'returns error when the quantity is invalid' do
       post '/cart', params: { product_id: product.id, quantity: 0 }, as: :json
 
       expect(response).to have_http_status(:unprocessable_entity)
@@ -41,7 +41,7 @@ RSpec.describe 'Carts', type: :request do
   end
 
   describe 'GET /cart' do
-    it 'lista os itens do carrinho atual' do
+    it 'lists the current cart items' do
       post '/cart', params: { product_id: product.id, quantity: 1 }, as: :json
 
       get '/cart', as: :json
@@ -54,7 +54,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['total_price']).to eq(10.0)
     end
 
-    it 'retorna not_found quando não existe carrinho na sessão' do
+    it 'returns not_found when there is no cart in the session' do
       get '/cart', as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -64,7 +64,7 @@ RSpec.describe 'Carts', type: :request do
   end
 
   describe 'POST /cart/add_item' do
-    it 'altera a quantidade de um produto que já está no carrinho' do
+    it 'changes the quantity of a product already in the cart' do
       post '/cart', params: { product_id: product.id, quantity: 2 }, as: :json
 
       post '/cart/add_item', params: { product_id: product.id, quantity: 5 }, as: :json
@@ -79,7 +79,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['total_price']).to eq(50.0)
     end
 
-    it 'retorna erro quando a quantidade é inválida' do
+    it 'returns error when the quantity is invalid' do
       post '/cart', params: { product_id: product.id, quantity: 1 }, as: :json
 
       post '/cart/add_item', params: { product_id: product.id, quantity: 0 }, as: :json
@@ -89,7 +89,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['error']).to eq('Quantity must be greater than 0')
     end
 
-    it 'retorna erro quando o produto não existe' do
+    it 'returns error when the product does not exist' do
       post '/cart/add_item', params: { product_id: 0, quantity: 1 }, as: :json
 
       expect(response).to have_http_status(:not_found)
@@ -99,7 +99,7 @@ RSpec.describe 'Carts', type: :request do
   end
 
   describe 'DELETE /cart/:product_id' do
-    it 'remove o produto do carrinho e atualiza os totais' do
+    it 'removes the product from the cart and updates totals' do
       post '/cart', params: { product_id: product.id, quantity: 1 }, as: :json
 
       delete "/cart/#{product.id}", as: :json
@@ -111,7 +111,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['total_price']).to eq(0.0)
     end
 
-    it 'retorna erro quando o produto não está no carrinho' do
+    it 'returns error when the product is not in the cart' do
       post '/cart', params: { product_id: product.id, quantity: 1 }, as: :json
 
       delete "/cart/999999", as: :json
@@ -121,7 +121,7 @@ RSpec.describe 'Carts', type: :request do
       expect(body['error']).to eq('Item not found in cart')
     end
 
-    it 'retorna erro quando não há carrinho na sessão' do
+    it 'returns error when there is no cart in the session' do
       delete "/cart/#{product.id}", as: :json
 
       expect(response).to have_http_status(:not_found)
