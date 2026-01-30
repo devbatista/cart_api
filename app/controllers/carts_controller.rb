@@ -1,7 +1,7 @@
 class CartsController < ApplicationController
   def create
-    product = Product.find(params.require(:product_id))
-    quantity = params.require(:quantity).to_i
+    product = Product.find(cart_params[:product_id])
+    quantity = cart_params[:quantity].to_i
 
     return render_invalid_quantity if quantity <= 0
 
@@ -57,5 +57,9 @@ class CartsController < ApplicationController
       quantity: item.quantity,
       total_price: item.total_price.to_f
     }
+  end
+
+  def cart_params
+    params.permit(:product_id, :quantity)
   end
 end
