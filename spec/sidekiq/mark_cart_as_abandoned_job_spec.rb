@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe MarkCartAsAbandonedJob, type: :job do
-  it 'marca como abandonados os carrinhos inativos há mais de 3 horas' do
+  it 'marks carts inactive for more than 3 hours as abandoned' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: false,
@@ -15,7 +15,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     expect(cart.abandoned_at).to be_present
   end
 
-  it 'não marca como abandonados carrinhos recentes' do
+  it 'does not mark recent carts as abandoned' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: false,
@@ -29,7 +29,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     expect(cart.abandoned_at).to be_nil
   end
 
-  it 'remove carrinhos abandonados há mais de 7 dias' do
+  it 'removes carts abandoned for more than 7 days' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: true,
@@ -41,7 +41,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     }.to change { Cart.exists?(cart.id) }.from(true).to(false)
   end
 
-  it 'usa created_at quando last_interaction_at é nulo' do
+  it 'uses created_at when last_interaction_at is nil' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: false,
@@ -56,7 +56,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     expect(cart.abandoned_at).to be_present
   end
 
-  it 'não deleta carrinhos ativos mesmo que antigos' do
+  it 'does not delete active carts even if old' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: false,
@@ -68,7 +68,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     }.not_to change { Cart.exists?(cart.id) }
   end
 
-  it 'não deleta carrinhos abandonados há menos de 7 dias' do
+  it 'does not delete carts abandoned for less than 7 days' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: true,
@@ -80,7 +80,7 @@ RSpec.describe MarkCartAsAbandonedJob, type: :job do
     }.not_to change { Cart.exists?(cart.id) }
   end
 
-  it 'é idempotente ao marcar como abandonado' do
+  it 'is idempotent when marking as abandoned' do
     cart = Cart.create!(
       total_price: 0,
       abandoned: false,
