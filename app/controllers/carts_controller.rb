@@ -5,7 +5,7 @@ class CartsController < ApplicationController
 
     cart = Cart.find_by(id: session[:cart_id])
     return render json: { error: 'Cart not found' }, status: :not_found unless cart
-    
+
     render json: cart_payload(cart), status: :ok
   end
 
@@ -23,6 +23,26 @@ class CartsController < ApplicationController
     cart.update_total_price!
 
     render json: cart_payload(cart), status: :created
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Product not found' }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
+  end
+
+  def add_item
+    product = Product.find(cart_params[:product_id])
+    quantity = cart_params[:quantity].to_i
+
+    return render_invalid_quantity if quantity <= 0
+    
+    cart = current_cart
+    item = find_or_build_item(cart, product)
+    item.quantity = quantity
+    item.save!
+
+    cart.update_total_price!
+
+    render json: cart_payload(cart), status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Product not found' }, status: :not_found
   rescue ActiveRecord::RecordInvalid => e
