@@ -49,6 +49,21 @@ class CartsController < ApplicationController
     render json: { error: e.record.errors.full_messages.join(', ') }, status: :unprocessable_entity
   end
 
+  def remove_item
+    return render json: { error: 'Cart not found' }, status: :not_found unless session[:cart_id]
+
+    cart = Cart.includes(cart_items: :product).find_by(id: session[:cart_id])
+    return render json: { error: 'Cart not found' }, status: :not_found unless cart
+
+    item = cart.cart_items.find_by(product_id: params[:product_id])
+    return render json: { error: 'Item not found in cart' }, status: :not_found unless item
+
+    item.destroy!
+    cart.update_total_price!
+
+    render json: cart_payload(cart), status: :ok
+  end
+
   private
 
   def render_invalid_quantity
