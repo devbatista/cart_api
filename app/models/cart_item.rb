@@ -6,6 +6,8 @@ class CartItem < ApplicationRecord
 
   before_validation :set_prices
 
+  after_commit :touch_cart_interaction, on: %i[create update destroy]
+
   validates_numericality_of :total_price, greater_than_or_equal_to: 0
 
   private
@@ -13,5 +15,9 @@ class CartItem < ApplicationRecord
   def set_prices
     self.unit_price = product.price
     self.total_price = unit_price.to_d * quantity.to_i
+  end
+
+  def touch_cart_interaction
+    cart.touch_interaction!
   end
 end

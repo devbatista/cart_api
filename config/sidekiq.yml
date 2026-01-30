@@ -7,3 +7,11 @@
   - mailers
   - active_storage_analysis
   - active_storage_purge
+
+:scheduler:
+  :schedule:
+    abandoned_carts_job:
+      cron: "*/10 * * * *"
+      class: "AbandonedCartsJob"
+      queue: default
+      description: "Mark carts as abandoned if inactive for 3 hours"
